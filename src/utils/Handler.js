@@ -10,15 +10,3 @@ export { Handler };
 
 
 
-
-
-
-
-//    try{
-
-//    } catch(err) {
-//     res.status(err.code || 500).json({
-//         success : false,
-//         message : err.message
-//     })
-//    }

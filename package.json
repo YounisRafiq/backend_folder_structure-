@@ -6,7 +6,7 @@
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Younis_Ali",
   "license": "ISC",
   "description": "",
   "devDependencies": {

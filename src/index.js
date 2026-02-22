@@ -3,6 +3,9 @@ import connectdb from './db/index.js';
 import app from './app.js';
 
 
+app.get('/' , (req , res) => {
+    res.status(201).send("Hello Am Younis And Am A Full Stack Developer")
+})
 dotenv.config({
     path : './.env'
 });

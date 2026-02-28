@@ -1,30 +1,31 @@
-import { Handler } from "../utils/Handler";
-import { apiError } from "../utils/apiResponse.js";
+import { apiError } from "../utils/apiError.js";
+import { Handler } from "../utils/Handler.js";
 import jwt from "jsonwebtoken";
-import User from '../models/user.model.js';
+import { User } from "../models/user.model.js";
 
-export const verifyJWT = Handler(async (req , res , next) => {
+export const verifyJWT = Handler(async (req, _, next) => {
+  try {
+    const token =
+      req.cookies.accessToken ||
+      req.headers["authorization"]?.replace("Bearer ", "");
+      console.log("Token from Request:", token);
 
- try {
- const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "") || req.header("authorization")?.replace("Bearer ", "");
+    if (!token) {
+      throw new apiError(401, "Token Not Found");
+    }
 
-  if(!token){
-    throw new apiError(401 , "Unauthorized");
-}
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-const decoded = jwt.verify(token , process.env.ACCESS_TOKEN_SECRET) ;  
+    const user = await User.findById(decoded?._id).select("-password -refreshToken");
 
-const user = User.findById(decoded?._id).select("-password -refreshToken");
+    if (!user) {
+      throw new apiError(401, "User Not Found");
+    }
 
-if(!user){
-    throw new apiError(401 , "Invlid access token");
-}
-
-req.user = user;
-next();
-
- } catch(error) {
-   throw new apiError(401 , error?.message || "Invalid access token");
- }
-})
-
+    req.user = user;
+    next();
+  } catch (err) {
+    console.log(err);
+    throw new apiError(401, "Unauthorized Request");
+  }
+});
